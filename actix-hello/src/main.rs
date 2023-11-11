@@ -6,11 +6,11 @@ async fn hello() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    let uppercase = req_body.to_uppercase();
-    let lowercase = req_body.to_lowercase();
-    let echoed = format!("{}...", req_body);
+#[get("/echo")] 
+async fn echo(req: web::Query<models::EchoRequest>) -> impl Responder {
+    let uppercase = req.message.to_uppercase();
+    let lowercase = req.message.to_lowercase();
+    let echoed = format!("{}...", req.message);
     let response = models::EchoResponse {
         uppercase,
         lowercase,
