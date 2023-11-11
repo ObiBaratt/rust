@@ -9,5 +9,5 @@ pub struct EchoResponse {
 
 #[derive(Deserialize)]
 pub struct EchoRequest {
-    pub message: String,
+    pub message: Option<String>,
 }

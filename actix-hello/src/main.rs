@@ -1,16 +1,20 @@
-use actix_web::{get, middleware::Logger, web, App, HttpServer, Responder, HttpResponse, post};
+use actix_web::{get, middleware::Logger, web, App, HttpServer, Responder, HttpResponse};
 mod models;
 
 #[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+async fn hello() -> HttpResponse {
+    manual_hello().await
 }
 
 #[get("/echo")] 
 async fn echo(req: web::Query<models::EchoRequest>) -> impl Responder {
-    let uppercase = req.message.to_uppercase();
-    let lowercase = req.message.to_lowercase();
-    let echoed = format!("{}...", req.message);
+    let message = req.message.clone().unwrap_or("".to_string());
+    if message.len() == 0 {
+        return HttpResponse::BadRequest().body("Bad request");
+    }
+    let uppercase = message.to_uppercase();
+    let lowercase = message.to_lowercase();
+    let echoed = format!("{}...", message);
     let response = models::EchoResponse {
         uppercase,
         lowercase,
@@ -19,7 +23,7 @@ async fn echo(req: web::Query<models::EchoRequest>) -> impl Responder {
     HttpResponse::Ok().json(response)
 }
 
-async fn manual_hello() -> impl Responder {
+async fn manual_hello() -> HttpResponse {
     HttpResponse::Ok().body("Hey there!")
 }
 
